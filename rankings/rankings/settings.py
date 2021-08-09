@@ -15,6 +15,7 @@ NEWSPIDER_MODULE = 'rankings.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'rankings (+http://www.yourdomain.com)'
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True

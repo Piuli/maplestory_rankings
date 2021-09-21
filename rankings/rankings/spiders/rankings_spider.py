@@ -10,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.common.action_chains import ActionChains
 import time
 
 
@@ -50,53 +51,73 @@ class RankingsSpider(scrapy.Spider):
         
 class Rankings():
     
-    if __name__ == '__main__':
-        PATH = "C:\Program Files (x86)\chromedriver.exe"
-        driver = webdriver.Chrome(PATH)
-
-        # url = input('Type in the url: ')
-        
-        url = 'https://maplestory.nexon.net/landing'
-        driver.get(url)
-        
-        page = requests.get(url)
-        print(page.content)
-        
-        soup = BeautifulSoup(page.content, 'html.parser')
-        
-
-        
-        
-        
+    def navigate_to_rankings(self):
         try:
             link = driver.find_element_by_link_text('Go to Main Site')
             link.click()
             time.sleep(2)
         
-            url = driver.page_source
-            soup = BeautifulSoup(url, 'html.parser')
+            # url = driver.page_source
+            # soup = BeautifulSoup(url, 'html.parser')
         except Exception:
             driver.quit()
             
         try:
-            community = driver.find_element_by_class_name('ga-community ')
-            community_menu = Select(community)
-            community_menu.select_by_index(2)
+            community_hover = driver.find_element_by_xpath('/html/body/header/div[1]/nav/ul[1]/li[4]')
+            hover = ActionChains(driver).move_to_element(community_hover)
+            hover.perform()
+            # community_menu = Select(community)
+            # community_menu.select_by_index(2)
             
             time.sleep(2)
         
-            url = driver.page_source
-            soup = BeautifulSoup(url, 'html.parser')
+            # url = driver.page_source
+            # soup = BeautifulSoup(url, 'html.parser')
         except Exception:
-            driver.quit()
+            print("Can't find button\n")
+            
+        try:
+            rankings = driver.find_element_by_class_name('ga-community-playerrankings ')
+            rankings.click()
+            time.sleep(3)
         
-        # page = requests.get(url)
-        # soup = BeautifulSoup(page.content, 'html.parser')
-        # results = soup.find('h1', class_='title')
-        # print(results)
+            # url = driver.page_source
+            # soup = BeautifulSoup(url, 'html.parser')  
+        except Exception:
+            print('Can\'t find rankings button')
+            
+        try: 
+            both = driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[2]/div/main/div/div/div/div[2]/div[2]/div[3]')
+            both.click()
+            time.sleep(2)
+        except Exception:
+            print('Can\'t find both button')
 
+        url = driver.page_source
+        soup = BeautifulSoup(url, 'html.parser')  
+        
+        name = soup.find('div', class_='c-rank-list__table-row c-rank-list__table-row--header')[2]
+        print(name)
+            
 
+if __name__ == '__main__':
+    PATH = "C:\Program Files (x86)\chromedriver.exe"
+    driver = webdriver.Chrome(PATH)
+    driver.maximize_window()
+
+    # url = input('Type in the url: ')
+    r = Rankings()
     
+    url = 'https://maplestory.nexon.net/landing'
+    driver.get(url)
+    
+    page = requests.get(url)       
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    r.navigate_to_rankings()
+    
+
+
 
 
         

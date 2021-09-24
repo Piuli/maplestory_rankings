@@ -109,19 +109,32 @@ class Navigate():
     def get_page_url(self):
         source = self.driver.current_url
         return source
-        
-   
-if __name__ == '__main__':
-    n = Navigate()
     
-    n.main_site()
-    n.hover_community()
-    n.click_rankings()
-    n.change_ranking_type()
-    n.click_job()
-    n.click_class_type()
-    n.click_shade()
-    n.click_non_reboot()
-    # n.get_ign()
-    n.get_page_url()
+    def order(self):
+        self.main_site()
+        self.hover_community()
+        self.click_rankings()
+        self.change_ranking_type()
+        self.click_job()
+        self.click_class_type()
+        self.click_shade()
+        self.click_non_reboot()
+        # n.get_ign()
+        source = self.get_page_url()
+        return source
+            
+   
+# if __name__ == '__main__':
+#     n = Navigate()
+    
+#     n.main_site()
+#     n.hover_community()
+#     n.click_rankings()
+#     n.change_ranking_type()
+#     n.click_job()
+#     n.click_class_type()
+#     n.click_shade()
+#     n.click_non_reboot()
+#     # n.get_ign()
+#     n.get_page_url()
             

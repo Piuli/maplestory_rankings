@@ -13,41 +13,6 @@ from selenium.webdriver.support.select import Select
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 
-
-
-class RankingsSpider(scrapy.Spider):
-    name = 'rankings'
-
-    def start_requests(self):
-        page_response = requests.get('https://maplestory.nexon.net/rankings/job-ranking/shade/shade?rebootIndex=0')
-        url = page_response.url
-        urls = [url]
-        
-        for url in urls:
-            yield scrapy.Request(url=url, callback=self.parse)
-    
-    def parse(self, response):
-        name = response.css('div.c-rank-list__table-cell-text').extract()
-        rankings = response.css('h1.title').extract()
-        location = response.css('div.c-filter__item.c-filter__item--north-america.active').extract()
-        
-        page_response = requests.get('https://maplestory.nexon.net/rankings/job-ranking/shade/shade?rebootIndex=0')
-        url = page_response.url
-        
-        PATH = "C:\Program Files (x86)\chromedriver.exe"
-        driver = webdriver.Chrome(PATH)
-        driver.get(url)
-        page = requests.get(url)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        results = soup.find('div', class_='c-rank-list__table-cell-text')
-        print(results)
-     
-        yield {
-            'name': name,
-            'rankings': rankings,
-            'url': url,
-            'location': location
-            }
         
 class Rankings():
     
@@ -82,13 +47,13 @@ class Rankings():
         except Exception:
             print('Can\'t find rankings button')
                  
-    def click_both(self):
+    def click_non_reboot(self):
         try: 
-            both = driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[2]/div/main/div/div/div/div[2]/div[2]/div[3]')
-            both.click()
-            time.sleep(2)
+            non_reboot = driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[2]/div/main/div/div/div/div[2]/div[2]/div[2]')
+            non_reboot.click()
+            time.sleep(1)
         except Exception:
-            print('Can\'t find both button')
+            print('Can\'t find non-reboot button')
 
     def change_ranking_type(self):
         try:
@@ -125,9 +90,59 @@ class Rankings():
     def get_ign(self):
         url = driver.page_source
         soup = BeautifulSoup(url, 'html.parser')
-        for ign in soup.find_all('div', class_='c-rank-list__table-row'):
-            name = ign.find('div', class_='c-rank-list__table-cell-text').text
-            print(name)
+        
+        while True:
+            for ign in soup.find_all('div', class_='c-rank-list__table-row')[1:6]:
+                name = ign.find_all('div', class_='c-rank-list__table-cell-text')[2].text
+                level = ign.find_all('div', class_='c-rank-list__table-cell-text')[5].text[0]
+                print(name + ' ' + level)
+            try:
+                link = driver.find_element_by_class_name('c-rank-list__arrow.c-rank-list__arrow--right ')
+                link.click()
+                time.sleep(2)
+                    
+                url = driver.page_source
+                soup = BeautifulSoup(url, 'html.parser')
+            except Exception:
+                break
+                 
+            
+class RankingsSpider(scrapy.Spider):
+    name = 'rankings'
+
+    r = Rankings()
+
+    def start_requests(self):
+        r.main_site()
+        r.hover_community()
+        r.click_rankings()
+        r.change_ranking_type()
+        r.click_job()
+        r.click_class_type()
+        r.click_shade()
+        r.click_non_reboot()
+        
+        urls = [driver.page_source]
+ 
+        
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse)
+    
+    def parse(self, response):
+        name = response.css('div.c-rank-list__table-cell-text').extract()
+        rankings = response.css('h1.title').extract()
+        location = response.css('div.c-filter__item.c-filter__item--north-america.active').extract()
+        
+        page_response = requests.get('https://maplestory.nexon.net/rankings/job-ranking/shade/shade?rebootIndex=0')
+        url = page_response.url
+        
+     
+        yield {
+            'name': name,
+            'rankings': rankings,
+            'url': url,
+            'location': location
+            }            
 
 if __name__ == '__main__':
     PATH = "C:\Program Files (x86)\chromedriver.exe"
@@ -148,7 +163,8 @@ if __name__ == '__main__':
     r.click_job()
     r.click_class_type()
     r.click_shade()
-    r.click_both()
+    r.click_non_reboot()
+    r.get_ign()
 
 
 

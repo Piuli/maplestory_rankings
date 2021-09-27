@@ -5,21 +5,17 @@ Created on Sun Sep 26 21:31:05 2021
 @author: Piuli
 """
 
-import scrapy
-import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.common.action_chains import ActionChains
 import time
-
+import csv
 
 class PlayerInfo():
     
         def __init__(self):
             PATH = "C:\Program Files (x86)\chromedriver.exe"
             self.driver = webdriver.Chrome(PATH)
-            self.driver.maximize_window()
+            # self.driver.maximize_window()
     
             self.url = 'https://maplestory.nexon.net/rankings/job-ranking/shade/shade?rebootIndex=2'
             self.driver.get(self.url)
@@ -27,12 +23,24 @@ class PlayerInfo():
         def get_player_info(self):
             url = self.driver.page_source
             soup = BeautifulSoup(url, 'html.parser')
+            
+            header = ['character', 'world', 'level']
+            with open ('rankings.csv', 'w') as f:
+                writer = csv.writer(f)
+                writer.writerow(header)
           
             while True:
                 for ign in soup.find_all('div', class_='c-rank-list__table-row')[1:6]:
-                    name = ign.find_all('div', class_='c-rank-list__table-cell-text')[2].text
-                    level = ign.find_all('div', class_='c-rank-list__table-cell-text')[5].text[0]
-                    print(name + ' ' + level)
+                    name = ign.find_all('div', class_='c-rank-list__table-cell-text')[2].text.strip()
+                    
+                    div_tag = ign.find_all('div', class_='c-rank-list__table-cell-text')[3]
+                    a_tag = div_tag.find('a')
+                    world = (a_tag['class'][1])
+                        
+                    level = ign.find_all('div', class_='c-rank-list__table-cell-text')[5].contents[0].strip()
+                    print(name + ' ' + level + ' ' + world)
+                    
+                    writer.writerows(name)
                 try:
                     link = self.driver.find_element_by_class_name('c-rank-list__arrow.c-rank-list__arrow--right ')
                     link.click()
@@ -40,6 +48,7 @@ class PlayerInfo():
                         
                     url = self.driver.page_source
                     soup = BeautifulSoup(url, 'html.parser')
+                    break
                 except Exception:
                     break
                 

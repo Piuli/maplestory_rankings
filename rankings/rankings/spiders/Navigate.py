@@ -19,7 +19,8 @@ class Navigate():
         self.driver = webdriver.Chrome(PATH)
         self.driver.maximize_window()
 
-        self.url = 'https://maplestory.nexon.net/landing'
+        # self.url = 'https://maplestory.nexon.net/landing'
+        self.url = 'https://maplestory.nexon.net/rankings/job-ranking/shade/shade?rebootIndex=2'
         self.driver.get(self.url)
 
     def main_site(self):  
@@ -87,7 +88,7 @@ class Navigate():
         except Exception:
              print('Can\'t find non-reboot button')
     
-    def get_ign(self):
+    def get_player_info(self):
       url = self.driver.page_source
       soup = BeautifulSoup(url, 'html.parser')
       
@@ -105,21 +106,22 @@ class Navigate():
               soup = BeautifulSoup(url, 'html.parser')
           except Exception:
               break
+    
           
     def get_page_url(self):
         source = self.driver.current_url
         return source
     
     def order(self):
-        self.main_site()
-        self.hover_community()
-        self.click_player_rankings()
-        self.ranking_type_dropdown()
-        self.job_dropdown()
-        self.class_dropdown()
-        self.click_shade()
-        self.click_non_reboot()
-        self.get_ign()
+        # self.main_site()
+        # self.hover_community()
+        # self.click_player_rankings()
+        # self.ranking_type_dropdown()
+        # self.job_dropdown()
+        # self.class_dropdown()
+        # self.click_shade()
+        # self.click_non_reboot()
+        self.get_player_info()
         # source = self.get_page_url()
         # return source
             

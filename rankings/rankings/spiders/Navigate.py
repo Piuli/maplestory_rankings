@@ -32,30 +32,22 @@ class Navigate():
     
     def hover_community(self):
         try:
-            community_hover = self.driver.find_element_by_xpath('/html/body/header/div[1]/nav/ul[1]/li[4]')
+            community_hover = self.driver.find_element_by_class_name('ga-community ')
             hover = ActionChains(self.driver).move_to_element(community_hover)
             hover.perform()
             time.sleep(2)
         except Exception:
             print("Can't find button\n")
     
-    def click_rankings(self):
+    def click_player_rankings(self):
         try:
             rankings = self.driver.find_element_by_class_name('ga-community-playerrankings ')
             rankings.click()
             time.sleep(2) 
         except Exception:
             print('Can\'t find rankings button')
-                 
-    def click_non_reboot(self):
-        try: 
-            non_reboot = self.driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[2]/div/main/div/div/div/div[2]/div[2]/div[2]')
-            non_reboot.click()
-            time.sleep(1)
-        except Exception:
-            print('Can\'t find non-reboot button')
 
-    def change_ranking_type(self):
+    def ranking_type_dropdown(self):
         try:
             rank_type = self.driver.find_elements_by_class_name('c-filter-dd__current-filtered-item ')[0]
             rank_type.click()
@@ -63,17 +55,17 @@ class Navigate():
         except Exception:
             print('No rank type found')
             
-    def click_job(self):
+    def job_dropdown(self):
         try:
-            job = self.driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[2]/div/main/div/div/div/div[1]/div[2]/div[1]/div/div[2]/div[5]')  # fix xpath
+            job = self.driver.find_element_by_class_name('c-filter-dd__filterable-item.c-filter-dd__filterable-item--job ')
             job.click()
             time.sleep(1)          
         except Exception:
             print('No category job found')
             
-    def click_class_type(self):
+    def class_dropdown(self):
         try:
-            class_menu = self.driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[2]/div/main/div/div/div/div[2]/div[1]/div[1]/div/div[1]')  
+            class_menu= self.driver.find_elements_by_class_name('c-filter-dd__current-filtered-item ')[1]
             class_menu.click()
             time.sleep(1)
         except Exception:
@@ -86,6 +78,14 @@ class Navigate():
             time.sleep(1)
         except Exception:
             print('Shade option not found')
+            
+    def click_non_reboot(self):
+        try: 
+            non_reboot = self.driver.find_element_by_xpath('/html/body/div[3]/div[2]/div[2]/div/main/div/div/div/div[2]/div[2]/div[2]')
+            non_reboot.click()
+            time.sleep(1)
+        except Exception:
+             print('Can\'t find non-reboot button')
     
     def get_ign(self):
       url = self.driver.page_source
@@ -113,19 +113,20 @@ class Navigate():
     def order(self):
         self.main_site()
         self.hover_community()
-        self.click_rankings()
-        self.change_ranking_type()
-        self.click_job()
-        self.click_class_type()
+        self.click_player_rankings()
+        self.ranking_type_dropdown()
+        self.job_dropdown()
+        self.class_dropdown()
         self.click_shade()
         self.click_non_reboot()
-        # n.get_ign()
-        source = self.get_page_url()
-        return source
+        self.get_ign()
+        # source = self.get_page_url()
+        # return source
             
    
-# if __name__ == '__main__':
-#     n = Navigate()
+if __name__ == '__main__':
+    n = Navigate()
+    n.order()
     
 #     n.main_site()
 #     n.hover_community()

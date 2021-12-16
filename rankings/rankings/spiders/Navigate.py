@@ -17,7 +17,7 @@ class Navigate():
     def __init__(self):
         PATH = "C:\Program Files (x86)\chromedriver.exe"
         self.driver = webdriver.Chrome(PATH)
-        self.driver.maximize_window()
+        # self.driver.maximize_window()
 
         # self.url = 'https://maplestory.nexon.net/landing'
         self.url = 'https://maplestory.nexon.net/rankings/job-ranking/shade/shade?rebootIndex=2'
@@ -95,12 +95,18 @@ class Navigate():
       while True:
           for ign in soup.find_all('div', class_='c-rank-list__table-row')[1:6]:
               name = ign.find_all('div', class_='c-rank-list__table-cell-text')[2].text
-              level = ign.find_all('div', class_='c-rank-list__table-cell-text')[5].text[0]
-              print(name + ' ' + level)
+              level = ign.find_all('div', class_='c-rank-list__table-cell-text')[5].contents[0]
+              
+              div_tag = ign.find_all('div', class_='c-rank-list__table-cell-text')[3]
+              a_tag = div_tag.find('a')
+              world = (a_tag['class'][1])
+              print(name)
+              print(level)
+              print(world)
           try:
               link = self.driver.find_element_by_class_name('c-rank-list__arrow.c-rank-list__arrow--right ')
               link.click()
-              time.sleep(2)
+              time.sleep(1)
                   
               url = self.driver.page_source
               soup = BeautifulSoup(url, 'html.parser')
